@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 
 type LoginPageProps = {
-  searchParams?: Promise<{ error?: string }>;
+  searchParams?: Promise<{ error?: string; redirect?: string }>;
 };
 
 const errorMessages: Record<string, string> = {
@@ -13,6 +13,7 @@ const errorMessages: Record<string, string> = {
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const resolvedParams = searchParams ? await searchParams : undefined;
   const errorKey = resolvedParams?.error;
+  const redirectTo = resolvedParams?.redirect ?? "";
   const errorMessage = errorKey ? errorMessages[errorKey] : null;
 
   return (
@@ -33,6 +34,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
       </div>
 
       <form action="/api/auth/login" method="post" className="space-y-4">
+        <input type="hidden" name="redirect" value={redirectTo} />
         <label className="flex flex-col gap-2 text-sm font-medium text-zinc-700 dark:text-zinc-200">
           Email
           <input

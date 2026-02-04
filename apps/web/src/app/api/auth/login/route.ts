@@ -19,6 +19,7 @@ export async function POST(request: Request) {
   const formData = await request.formData();
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
+  const redirectTo = String(formData.get("redirect") ?? "");
   const baseUrl = await getBaseUrl();
 
   if (!email || !password) {
@@ -37,5 +38,10 @@ export async function POST(request: Request) {
     );
   }
 
-  return NextResponse.redirect(new URL("/catalogo", baseUrl));
+  const safeRedirect =
+    redirectTo.startsWith("/") && !redirectTo.startsWith("//")
+      ? redirectTo
+      : "/catalogo";
+
+  return NextResponse.redirect(new URL(safeRedirect, baseUrl));
 }
